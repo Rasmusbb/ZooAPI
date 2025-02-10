@@ -14,6 +14,7 @@ namespace ZooAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly  ZooAPIContext _context;
+        private readonly string DsetNull = "Entity set 'DatabaseContext.User'  is null.";
 
         public UserController(ZooAPIContext context)
         {
@@ -24,12 +25,16 @@ namespace ZooAPI.Controllers
         [HttpGet("Login")]
         public async Task<ActionResult<UserDTOID>> Login(string Email, string Password)
         {
-            User User = _context.Users.FirstOrDefault(u => u.Email == Email && u.Password == Password);
-            if (User == null)
+            if (_context.Users == null)
+            {
+                return Problem(DsetNull);
+            }
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email && u.Password == Password);
+            if (user == null)
             {
                 return NotFound();
             }
-            return Ok(User.Adapt<UserDTOID>());
+            return Ok(user.Adapt<UserDTOID>());
         }
 
         [HttpPost("AddUser")]
@@ -37,19 +42,23 @@ namespace ZooAPI.Controllers
         {
             if (_context.Users == null)
             {
-                return Problem("Entity set 'DatabaseContext.User'  is null.");
+                return Problem(DsetNull);
             }
-            User User = UserDTO.Adapt<User>();
-            _context.Users.Add(User);
+            User user = UserDTO.Adapt<User>();
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetUser", new { id = User.UserID },User);
+            return CreatedAtAction("GetUser", new { id = user.UserID },user);
 
         }
 
         [HttpGet("GetUser")]
         public async Task<ActionResult<UserDTO>> GetUser(Guid UserID)
         {
-            var User = await _context.Users.FindAsync(UserID);
+            if (_context.Users == null)
+            {
+                return Problem(DsetNull);
+            }
+            User User = await _context.Users.FindAsync(UserID);
             if (User == null)
             {
                 return NotFound();
@@ -57,12 +66,48 @@ namespace ZooAPI.Controllers
             return User.Adapt<UserDTO>();
         }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<List<UserDTOID>>> GetAllUsers()
+        [HttpPut("MakeUserDefault")]
+        public async Task<ActionResult<UserDTO>> MakeUserZooKeeper(Guid UserID)
         {
-            List<User> users = _context.Users.ToList();
+            if (_context.Users == null)
+            {
+                return Problem(DsetNull);
+            }
+            User user = await _context.Users.FindAsync(UserID);
+            user.Role = UserRole.User;
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+       [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<List<UserDTOID>>> GetAllUsers(UserRole role)
+        {
+            List<User> users = await _context.Users.Where(u => u.Role == role).ToListAsync();
             return users.Adapt<List<UserDTOID>>();
         }
 
+        [HttpPut("EditedUser")]
+
+        public async Task<ActionResult<UserDTOID>> EditedUser(Guid UserID,UserDTO UserDTO)
+        {
+
+            if (_context.Users == null)
+            {
+                return Problem(DsetNull);
+            }
+            User user = await _context.Users.FindAsync(UserID);
+            user = UserDTO.Adapt<User>();
+            
+            _context.SaveChanges();
+
+            if (user == null)
+            {
+                return NotFound(user.UserID);
+            }
+            
+            return user.Adapt<UserDTOID>();
+        }
     }
 }
