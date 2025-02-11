@@ -1,17 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
+
+using ZooAPI.Interfaces;
 
 namespace ZooAPI.models
 {
     public enum UserRole
     {
-        Adminstrator,
+        Admin,
         ZooKeeper,
         Veterinarian,
-        None
+        User
     }
 
-    public class User
+    public class User : IUser
     {
         [Key]
         public Guid UserID { get; set; }
@@ -23,6 +26,9 @@ namespace ZooAPI.models
         public string mainArea { get; set; }
         public string Password { get; set; }
         public bool changedDefault { get; set; }
+        public bool Deleted { get; set; }
+
+        public ICollection<ZooKeeper> Enclosures { get; set; }
 
     }
 }

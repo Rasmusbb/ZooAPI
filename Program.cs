@@ -1,6 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using ZooAPI.Data;
 
 namespace ZooAPI
@@ -40,7 +39,6 @@ namespace ZooAPI
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
 
             app.UseCors("AllowAll");
             app.MapControllers();
