@@ -61,6 +61,7 @@ namespace ZooAPI.Controllers
         public async Task<ActionResult<List<UserDTOID>>> GetAllUsers()
         {
             List<User> users = _context.Users.ToList();
+
             return users.Adapt<List<UserDTOID>>();
         }
 

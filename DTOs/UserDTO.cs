@@ -11,7 +11,7 @@ namespace ZooAPI.DTOs
 
         public string mainArea { get; set; }
 
-        public UserRole Role { get; set; }
+        public string Role { get; set; }
 
         
     }
