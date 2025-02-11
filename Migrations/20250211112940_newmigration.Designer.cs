@@ -12,8 +12,8 @@ using ZooAPI.Data;
 namespace ZooAPI.Migrations
 {
     [DbContext(typeof(ZooAPIContext))]
-    [Migration("20250207125000_dyr")]
-    partial class dyr
+    [Migration("20250211112940_newmigration")]
+    partial class newmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

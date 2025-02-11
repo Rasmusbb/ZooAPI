@@ -3,9 +3,13 @@ using ZooAPI.models;
 using ZooAPI.Data;
 using ZooAPI.DTOs;
 using Mapster;
+using System.Security.Cryptography;
 using ZooAPI;
 using NuGet.DependencyResolver;
 using System.Data.Entity;
+using System.Text;
+using System.Security.Policy;
+using Microsoft.AspNetCore.Identity;
 
 namespace ZooAPI.Controllers
 {
@@ -29,12 +33,15 @@ namespace ZooAPI.Controllers
             {
                 return Problem(DsetNull);
             }
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email && u.Password == Password);
-            if (user == null)
+            User user = _context.Users.FirstOrDefault(u => u.Email == Email);
+            if (Hash(Password + user.UserID) == user.Password)
+            {
+                return Ok(user.Adapt<UserDTOID>());
+            }
+            else
             {
                 return NotFound();
             }
-            return Ok(user.Adapt<UserDTOID>());
         }
 
         [HttpPost("AddUser")]
@@ -46,6 +53,7 @@ namespace ZooAPI.Controllers
             }
             User user = UserDTO.Adapt<User>();
             _context.Users.Add(user);
+            user.Password = Hash(user.Password + user.UserID);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetUser", new { id = user.UserID },user);
 
@@ -108,6 +116,21 @@ namespace ZooAPI.Controllers
             }
             
             return user.Adapt<UserDTOID>();
+        }
+
+
+        public static string Hash(string password)
+        {
+            StringBuilder builder = new StringBuilder();
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+            }
+            return builder.ToString();
         }
     }
 }
