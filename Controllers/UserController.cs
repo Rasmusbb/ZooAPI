@@ -8,8 +8,12 @@ using ZooAPI;
 using NuGet.DependencyResolver;
 using System.Data.Entity;
 using System.Text;
-using System.Security.Policy;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace ZooAPI.Controllers
 {
@@ -18,13 +22,15 @@ namespace ZooAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly  ZooAPIContext _context;
+        private readonly IConfiguration _configuration;
+
         private readonly string DsetNull = "Entity set 'DatabaseContext.User'  is null.";
 
-        public UserController(ZooAPIContext context)
+        public UserController(ZooAPIContext context,IConfiguration iConfig)
         {
             _context = context;
+            _configuration = iConfig;
         }
-
 
         [HttpGet("Login")]
         public async Task<ActionResult<UserDTOID>> Login(string Email, string Password)
@@ -36,14 +42,15 @@ namespace ZooAPI.Controllers
             User user = _context.Users.FirstOrDefault(u => u.Email == Email);
             if (Hash(Password + user.UserID) == user.Password)
             {
-                return Ok(user.Adapt<UserDTOID>());
+                
+                return Ok(GenerateJwtToken(user));
             }
             else
             {
                 return NotFound();
             }
         }
-
+        [Authorize]
         [HttpPost("AddUser")]
         public async Task<ActionResult<UserDTO>> AddUser(CreateUserDTO UserDTO)
         {
@@ -58,7 +65,7 @@ namespace ZooAPI.Controllers
             return CreatedAtAction("GetUser", new { id = user.UserID },user);
 
         }
-
+        [Authorize]
         [HttpGet("GetUser")]
         public async Task<ActionResult<UserDTO>> GetUser(Guid UserID)
         {
@@ -73,7 +80,7 @@ namespace ZooAPI.Controllers
             }
             return User.Adapt<UserDTO>();
         }
-
+        [Authorize]
         [HttpPut("MakeUserDefault")]
         public async Task<ActionResult<UserDTO>> MakeUserZooKeeper(Guid UserID)
         {
@@ -88,14 +95,14 @@ namespace ZooAPI.Controllers
             return NoContent();
         }
 
-
-       [HttpGet("GetAllUsers")]
+        [Authorize]
+        [HttpGet("GetAllUsers")]
         public async Task<ActionResult<List<UserDTOID>>> GetAllUsers(UserRole role)
         {
             List<User> users = _context.Users.ToList();
             return users.Adapt<List<UserDTOID>>();
         }
-
+        [Authorize]
         [HttpPut("EditedUser")]
 
         public async Task<ActionResult<UserDTOID>> EditedUser(Guid UserID,UserDTO UserDTO)
@@ -132,5 +139,28 @@ namespace ZooAPI.Controllers
             }
             return builder.ToString();
         }
+        private string GenerateJwtToken(User user)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Token").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            Claim[] claims = new Claim[]
+            {
+                new Claim("UserID", user.UserID.ToString()),
+                new Claim("Role", user.Role.ToString()),
+                new Claim("MainArea",user.mainArea),
+                new Claim("Phone",user.Phone),
+                new Claim("Email",user.Email),
+                new Claim("ChangeDefault", user.changedDefault.ToString())
+            };
+            var token = new JwtSecurityToken(
+                issuer: "ZooAPI",
+                audience: "ZooFrontEnd",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
     }
 }
