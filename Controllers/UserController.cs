@@ -33,24 +33,29 @@ namespace ZooAPI.Controllers
         }
 
         [HttpGet("Login")]
-        public async Task<ActionResult<UserDTOID>> Login(string Email, string Password)
+        public async Task<ActionResult<string>> Login(string Email, string Password)
         {
             if (_context.Users == null)
             {
                 return Problem(DsetNull);
             }
             User user = _context.Users.FirstOrDefault(u => u.Email == Email);
-            if (Hash(Password + user.UserID) == user.Password)
+            if(user != null)
             {
+                string Hash2 = Hash(Password + user.UserID);
+                if (Hash(Password + user.UserID) == user.Password)
+                {
                 
-                return Ok(GenerateJwtToken(user));
+                    return GenerateJwtToken(user);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
-            {
-                return NotFound();
-            }
+            return NotFound();
         }
-        [Authorize]
+
         [HttpPost("AddUser")]
         public async Task<ActionResult<UserDTO>> AddUser(CreateUserDTO UserDTO)
         {
@@ -128,6 +133,7 @@ namespace ZooAPI.Controllers
 
         public static string Hash(string password)
         {
+
             StringBuilder builder = new StringBuilder();
             using (SHA256 sha256Hash = SHA256.Create())
             {
