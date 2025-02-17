@@ -28,12 +28,44 @@ namespace ZooAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DeathDay")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("EnclosureID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("HealthJournalID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("HealthJournalID1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("characteristics")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("specialNeeds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("specie")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("statues")
+                        .HasColumnType("int");
 
                     b.HasKey("AnimalID");
 
                     b.HasIndex("EnclosureID");
+
+                    b.HasIndex("HealthJournalID1");
 
                     b.ToTable("Animals");
                 });
@@ -96,6 +128,20 @@ namespace ZooAPI.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserID = new Guid("57622b09-2e10-49ff-c0d7-08dd4f427cf0"),
+                            Deleted = false,
+                            Email = "BB@AalborgZoo.dk",
+                            Name = "BB",
+                            Password = "7791b785456b7814357e881d7642b057533e0f6a148e959e5a8134df3535acbb",
+                            Phone = "55286715",
+                            Role = 0,
+                            changedDefault = false,
+                            mainArea = "Dinosaurs"
+                        });
                 });
 
             modelBuilder.Entity("ZooAPI.models.ZooKeeper", b =>
@@ -121,7 +167,13 @@ namespace ZooAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ZooAPI.models.HealthJournal", "HealthJournal")
+                        .WithMany()
+                        .HasForeignKey("HealthJournalID1");
+
                     b.Navigation("Enclosure");
+
+                    b.Navigation("HealthJournal");
                 });
 
             modelBuilder.Entity("ZooAPI.models.ZooKeeper", b =>
