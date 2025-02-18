@@ -45,6 +45,8 @@ public DbSet<User> Users { get; set; }
 
         public DbSet<HealthJournal> HealthJournals {  get; set; }
 
+        public DbSet<WellBeingReport> WellBeingReports { get; set; }
+
     
     }
 }

@@ -7,9 +7,5 @@ namespace ZooAPI.models
     {
         [Key]
         public Guid HealthJournalID { get; set; }
-
-
-        [ForeignKey("AnimalID")]
-        public Guid AnimalID { get; set; }
     }
 }

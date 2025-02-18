@@ -12,8 +12,8 @@ using ZooAPI.Data;
 namespace ZooAPI.Migrations
 {
     [DbContext(typeof(ZooAPIContext))]
-    [Migration("20250217110359_test")]
-    partial class test
+    [Migration("20250218133738_workpls")]
+    partial class workpls
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,22 +37,25 @@ namespace ZooAPI.Migrations
                     b.Property<DateTime>("DeathDay")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("EnclosureID")
+                    b.Property<Guid?>("EnclosureID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("HealthJournalID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("HealthJournalID1")
+                    b.Property<Guid?>("HealthJournalID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("WellBeingReportID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("birthday")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("characteristics")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("physicalID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("specialNeeds")
@@ -68,7 +71,9 @@ namespace ZooAPI.Migrations
 
                     b.HasIndex("EnclosureID");
 
-                    b.HasIndex("HealthJournalID1");
+                    b.HasIndex("HealthJournalID");
+
+                    b.HasIndex("WellBeingReportID");
 
                     b.ToTable("Animals");
                 });
@@ -88,9 +93,6 @@ namespace ZooAPI.Migrations
                 {
                     b.Property<Guid>("HealthJournalID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AnimalID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("HealthJournalID");
@@ -147,6 +149,17 @@ namespace ZooAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ZooAPI.models.WellBeingReport", b =>
+                {
+                    b.Property<Guid>("WellBeingReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WellBeingReportID");
+
+                    b.ToTable("WellBeingReports");
+                });
+
             modelBuilder.Entity("ZooAPI.models.ZooKeeper", b =>
                 {
                     b.Property<Guid>("UserID")
@@ -166,17 +179,21 @@ namespace ZooAPI.Migrations
                 {
                     b.HasOne("ZooAPI.models.Enclosure", "Enclosure")
                         .WithMany()
-                        .HasForeignKey("EnclosureID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EnclosureID");
 
                     b.HasOne("ZooAPI.models.HealthJournal", "HealthJournal")
                         .WithMany()
-                        .HasForeignKey("HealthJournalID1");
+                        .HasForeignKey("HealthJournalID");
+
+                    b.HasOne("ZooAPI.models.WellBeingReport", "wellBeingReport")
+                        .WithMany()
+                        .HasForeignKey("WellBeingReportID");
 
                     b.Navigation("Enclosure");
 
                     b.Navigation("HealthJournal");
+
+                    b.Navigation("wellBeingReport");
                 });
 
             modelBuilder.Entity("ZooAPI.models.ZooKeeper", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ZooAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class test : Migration
+    public partial class workpls : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,8 +26,7 @@ namespace ZooAPI.Migrations
                 name: "HealthJournals",
                 columns: table => new
                 {
-                    HealthJournalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AnimalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    HealthJournalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,36 +53,14 @@ namespace ZooAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Animals",
+                name: "WellBeingReports",
                 columns: table => new
                 {
-                    AnimalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    statues = table.Column<int>(type: "int", nullable: false),
-                    birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeathDay = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    specie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    characteristics = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    specialNeeds = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HealthJournalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    HealthJournalID1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    WellBeingReportID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Animals", x => x.AnimalID);
-                    table.ForeignKey(
-                        name: "FK_Animals_HealthJournals_HealthJournalID1",
-                        column: x => x.HealthJournalID1,
-                        principalTable: "HealthJournals",
-                        principalColumn: "HealthJournalID");
-                    table.ForeignKey(
-                        name: "FK_Animals_enclosures_EnclosureID",
-                        column: x => x.EnclosureID,
-                        principalTable: "enclosures",
-                        principalColumn: "EnclosureID",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_WellBeingReports", x => x.WellBeingReportID);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,6 +87,44 @@ namespace ZooAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Animals",
+                columns: table => new
+                {
+                    AnimalID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    physicalID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    statues = table.Column<int>(type: "int", nullable: false),
+                    birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeathDay = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    specie = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    characteristics = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    specialNeeds = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HealthJournalID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    WellBeingReportID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Animals", x => x.AnimalID);
+                    table.ForeignKey(
+                        name: "FK_Animals_HealthJournals_HealthJournalID",
+                        column: x => x.HealthJournalID,
+                        principalTable: "HealthJournals",
+                        principalColumn: "HealthJournalID");
+                    table.ForeignKey(
+                        name: "FK_Animals_WellBeingReports_WellBeingReportID",
+                        column: x => x.WellBeingReportID,
+                        principalTable: "WellBeingReports",
+                        principalColumn: "WellBeingReportID");
+                    table.ForeignKey(
+                        name: "FK_Animals_enclosures_EnclosureID",
+                        column: x => x.EnclosureID,
+                        principalTable: "enclosures",
+                        principalColumn: "EnclosureID");
+                });
+
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserID", "Deleted", "Email", "Name", "Password", "Phone", "Role", "changedDefault", "mainArea" },
@@ -121,9 +136,14 @@ namespace ZooAPI.Migrations
                 column: "EnclosureID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animals_HealthJournalID1",
+                name: "IX_Animals_HealthJournalID",
                 table: "Animals",
-                column: "HealthJournalID1");
+                column: "HealthJournalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_WellBeingReportID",
+                table: "Animals",
+                column: "WellBeingReportID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ZooKeepers_EnclosureID",
@@ -142,6 +162,9 @@ namespace ZooAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "HealthJournals");
+
+            migrationBuilder.DropTable(
+                name: "WellBeingReports");
 
             migrationBuilder.DropTable(
                 name: "Users");

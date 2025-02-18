@@ -7,27 +7,26 @@ namespace ZooAPI.DTOs
 {
     public class AnimalDTO
     {
+        public string physicalID { get; set; }
         public string Name { get; set; }
         public statues statues { get; set; }
         public DateTime birthday { get; set; }
         public string specie { get; set; }
-        public string characteristics { get; set; }
-        public string specialNeeds { get; set; }
-        public string Comments { get; set; }
     }
 
-    public class AnimalDTODeath : AnimalDTO
-    {
-        public DateTime DeathDay { get; set; }
-    }
-    public class AnimalDTOJournals : AnimalDTO
-    {
-        public Guid HealthJournalID { get; set; }
-        public Guid EnclosureID { get; set; }
-    }
     public class AnimalDTOID : AnimalDTO
     {
         public Guid AnimalID { get; set; }
+    }
+    public class animalDTOProfil: AnimalDTOID
+    {
+        public string characteristics { get; set; }
+        public Guid HealthJournalID { get; set; }
+        public DateTime DeathDay { get; set; }
+        public Guid EnclosureID { get; set; }
+        public string Comments { get; set; }
+        public string specialNeeds { get; set; }
+
     }
 
 }
