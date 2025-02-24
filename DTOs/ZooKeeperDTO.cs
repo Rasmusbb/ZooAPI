@@ -2,6 +2,6 @@
 {
     public class ZooKeeperDTO : UserDTOID
     {
-        public ICollection<EnclosureDTO> Enclosures { get; set; } = new List<EnclosureDTO>();
+        public ICollection<EnclosureDTO> Enclosures { get; set; } 
     }
 }

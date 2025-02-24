@@ -30,53 +30,29 @@ namespace ZooAPI.Controllers
             }
             User user = await _context.Users.FindAsync(UserID);
             user.Role = UserRole.ZooKeeper;
-            _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
-
-        [HttpGet("GetZooKeeper")]
-        public async Task<ActionResult<ZooKeeper>> GetZooKeeper(Guid UserID)
+        [HttpPut("AddEnclosure")]
+        public async Task<ActionResult<UserDTO>> AddEnclosure(Guid UserID,Guid EncclosureID)
         {
             if (_context.Users == null)
             {
                 return Problem(DsetNull);
             }
-            if (User == null)
+            if(_context.enclosures == null)
             {
-                return NotFound();
+                return Problem("enclosures is Null");
             }
-            return await _context.ZooKeepers.FindAsync(UserID);
-        }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<List<UserDTOID>>> GetAllUsers(UserRole role)
-        {
-            List<User> users = await _context.Users.Where(u => u.Role == role).ToListAsync();
-            return users.Adapt<List<UserDTOID>>();
-        }
-
-        [HttpPut("EditedUser")]
-
-        public async Task<ActionResult<UserDTOID>> EditedUser(Guid UserID, UserDTO UserDTO)
-        {
-
-            if (_context.Users == null)
-            {
-                return Problem(DsetNull);
-            }
             User user = await _context.Users.FindAsync(UserID);
-            user = UserDTO.Adapt<User>();
-
-            _context.SaveChanges();
-
-            if (user == null)
+            if (user.Role == UserRole.ZooKeeper)
             {
-                return NotFound(user.UserID);
+                
+                await _context.SaveChangesAsync();
             }
-
-            return user.Adapt<UserDTOID>();
+            return NoContent();
         }
     }
 }

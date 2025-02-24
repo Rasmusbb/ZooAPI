@@ -21,7 +21,6 @@ namespace ZooAPI.models
         public statues statues { get; set; }
         public DateTime birthday { get; set; }
         public DateTime DeathDay { get; set; }
-        public string specie { get; set; }
         public string characteristics { get; set; }
 
         public string specialNeeds { get; set; }
@@ -37,9 +36,9 @@ namespace ZooAPI.models
         public WellBeingReport wellBeingReport { get; set; }
 
 
-        [ForeignKey("EnclosureID")]
-        public Guid? EnclosureID {  get; set; }
-        public Enclosure Enclosure { get; set; }
+        [ForeignKey("Species")]
+        public Guid? SpeciesID {  get; set; }
+        public Species Species { get; set; }
  
     }
 }

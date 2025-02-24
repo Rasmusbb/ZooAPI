@@ -28,7 +28,7 @@ namespace ZooAPI.models
         public bool changedDefault { get; set; }
         public bool Deleted { get; set; }
 
-        public ICollection<ZooKeeper> Enclosures { get; set; }
+        public ICollection<Enclosure> Enclosures { get; set; }
 
     }
 }

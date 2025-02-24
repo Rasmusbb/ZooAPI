@@ -6,22 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ZooAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class workpls : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "enclosures",
-                columns: table => new
-                {
-                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_enclosures", x => x.EnclosureID);
-                });
-
             migrationBuilder.CreateTable(
                 name: "HealthJournals",
                 columns: table => new
@@ -31,6 +20,19 @@ namespace ZooAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HealthJournals", x => x.HealthJournalID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Species",
+                columns: table => new
+                {
+                    SpeciesID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SpeciesName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gotindividuals = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Species", x => x.SpeciesID);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,26 +66,29 @@ namespace ZooAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ZooKeepers",
+                name: "enclosures",
                 columns: table => new
                 {
+                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EnclosureName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SpeciesID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ZooKeepers", x => new { x.UserID, x.EnclosureID });
+                    table.PrimaryKey("PK_enclosures", x => x.EnclosureID);
                     table.ForeignKey(
-                        name: "FK_ZooKeepers_Users_UserID",
+                        name: "FK_enclosures_Species_SpeciesID",
+                        column: x => x.SpeciesID,
+                        principalTable: "Species",
+                        principalColumn: "SpeciesID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_enclosures_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ZooKeepers_enclosures_EnclosureID",
-                        column: x => x.EnclosureID,
-                        principalTable: "enclosures",
-                        principalColumn: "EnclosureID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -97,13 +102,12 @@ namespace ZooAPI.Migrations
                     statues = table.Column<int>(type: "int", nullable: false),
                     birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeathDay = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    specie = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     characteristics = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     specialNeeds = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HealthJournalID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     WellBeingReportID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    SpeciesID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -114,15 +118,15 @@ namespace ZooAPI.Migrations
                         principalTable: "HealthJournals",
                         principalColumn: "HealthJournalID");
                     table.ForeignKey(
+                        name: "FK_Animals_Species_SpeciesID",
+                        column: x => x.SpeciesID,
+                        principalTable: "Species",
+                        principalColumn: "SpeciesID");
+                    table.ForeignKey(
                         name: "FK_Animals_WellBeingReports_WellBeingReportID",
                         column: x => x.WellBeingReportID,
                         principalTable: "WellBeingReports",
                         principalColumn: "WellBeingReportID");
-                    table.ForeignKey(
-                        name: "FK_Animals_enclosures_EnclosureID",
-                        column: x => x.EnclosureID,
-                        principalTable: "enclosures",
-                        principalColumn: "EnclosureID");
                 });
 
             migrationBuilder.InsertData(
@@ -131,14 +135,14 @@ namespace ZooAPI.Migrations
                 values: new object[] { new Guid("57622b09-2e10-49ff-c0d7-08dd4f427cf0"), false, "BB@AalborgZoo.dk", "BB", "7791b785456b7814357e881d7642b057533e0f6a148e959e5a8134df3535acbb", "55286715", 0, false, "Dinosaurs" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animals_EnclosureID",
-                table: "Animals",
-                column: "EnclosureID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Animals_HealthJournalID",
                 table: "Animals",
                 column: "HealthJournalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_SpeciesID",
+                table: "Animals",
+                column: "SpeciesID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Animals_WellBeingReportID",
@@ -146,9 +150,14 @@ namespace ZooAPI.Migrations
                 column: "WellBeingReportID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ZooKeepers_EnclosureID",
-                table: "ZooKeepers",
-                column: "EnclosureID");
+                name: "IX_enclosures_SpeciesID",
+                table: "enclosures",
+                column: "SpeciesID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_enclosures_UserID",
+                table: "enclosures",
+                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -158,7 +167,7 @@ namespace ZooAPI.Migrations
                 name: "Animals");
 
             migrationBuilder.DropTable(
-                name: "ZooKeepers");
+                name: "enclosures");
 
             migrationBuilder.DropTable(
                 name: "HealthJournals");
@@ -167,10 +176,10 @@ namespace ZooAPI.Migrations
                 name: "WellBeingReports");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Species");
 
             migrationBuilder.DropTable(
-                name: "enclosures");
+                name: "Users");
         }
     }
 }

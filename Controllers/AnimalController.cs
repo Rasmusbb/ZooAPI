@@ -65,6 +65,17 @@ namespace ZooAPI.Controllers
             return animals.Adapt<List<AnimalDTOID>>();
         }
 
+        [HttpGet("GetAllSpecies")]
+        public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies(string specie)
+        {
+            if (_context.Species == null)
+            {
+                return Problem(DsetNull);
+            }
+            List<Species> species = _context.Species.ToList();
+            return specie.Adapt<List<SpeciesDTOID>>();
+        }
+
         [HttpPut("EditAnimal")]
         public async Task<ActionResult<AnimalDTO>> EditAnimal(Guid AnimalID, AnimalDTO animalDTO)
         {

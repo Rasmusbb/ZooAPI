@@ -17,17 +17,6 @@ namespace ZooAPI.Interfaces
     }
 
 
-    public interface IZooKeeper : IUser
-    {
-        ICollection<Enclosure> enclosures { get; set; }
-    }
-
-    public interface IVeterinarian : IUser
-    {
-        ICollection<Animal> animals { get; set; }
-
-    }
-
     public interface IAdmin : IUser
     {
 
