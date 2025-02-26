@@ -72,7 +72,7 @@ namespace ZooAPI.Controllers
             {
                 return Problem(DsetNull);
             }
-            List<Species> species = _context.Species.ToList();
+            List<Specie> species = _context.Species.ToList();
             return specie.Adapt<List<SpeciesDTOID>>();
         }
 

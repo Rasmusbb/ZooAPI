@@ -21,24 +21,23 @@ namespace ZooAPI.Data
         {
 
             modelBuilder.Entity<Enclosure>()
-                .HasOne(e => e.User)
-                .WithMany(z => z.Enclosures)
-                .HasForeignKey(e => e.UserID);
+                .HasMany(E => E.Users)
+                .WithMany(U => U.Enclosures)
+                .UsingEntity(
+                    "EnclosureStaff",
+                    U => U.HasOne(typeof(User)).WithMany().HasForeignKey("UserID").HasPrincipalKey(nameof(User.UserID)),
+                    E => E.HasOne(typeof(Enclosure)).WithMany().HasForeignKey("EnclosureID").HasPrincipalKey(nameof(Enclosure.EnclosureID)),
+                    EU => EU.HasKey("EnclosureID", "UserID"));
+
 
             modelBuilder.Entity<Enclosure>()
-                .HasOne(e => e.Species)
-                .WithMany(s => s.enclosures)
-                .HasForeignKey(e => e.SpeciesID);
-
-
-
-
-
-
-
-
-
-
+                .HasMany(E => E.Species)
+                .WithMany(S => S.Enclosures)
+                .UsingEntity(
+                "EnclosureSpecies",
+                S => S.HasOne(typeof(Specie)).WithMany().HasForeignKey("SpecieID").HasPrincipalKey(nameof(Specie.SpecieID)),
+                E => E.HasOne(typeof(Enclosure)).WithMany().HasForeignKey("EnclosureID").HasPrincipalKey(nameof(Enclosure.EnclosureID)),
+                ES => ES.HasKey("EnclosureID", "SpecieID"));
 
             modelBuilder.Entity<User>(b =>
             {
@@ -49,9 +48,9 @@ namespace ZooAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Enclosure> enclosures { get; set; }
-        public DbSet<Species> Species { get; set; }
+        public DbSet<Specie> Species { get; set; }
 
-
+        public DbSet<Toys> Toys { get; set; }
         public DbSet<HealthJournal> HealthJournals {  get; set; }
 
         public DbSet<WellBeingReport> WellBeingReports { get; set; }

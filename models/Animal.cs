@@ -37,8 +37,8 @@ namespace ZooAPI.models
 
 
         [ForeignKey("Species")]
-        public Guid? SpeciesID {  get; set; }
-        public Species Species { get; set; }
+        public Guid? SpecieID {  get; set; }
+        public Specie Specie { get; set; }
  
     }
 }

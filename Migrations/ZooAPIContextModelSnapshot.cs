@@ -22,6 +22,36 @@ namespace ZooAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EnclosureSpecies", b =>
+                {
+                    b.Property<Guid>("EnclosureID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SpecieID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EnclosureID", "SpecieID");
+
+                    b.HasIndex("SpecieID");
+
+                    b.ToTable("EnclosureSpecies");
+                });
+
+            modelBuilder.Entity("EnclosureStaff", b =>
+                {
+                    b.Property<Guid>("EnclosureID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EnclosureID", "UserID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("EnclosureStaff");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Animal", b =>
                 {
                     b.Property<Guid>("AnimalID")
@@ -40,7 +70,7 @@ namespace ZooAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SpeciesID")
+                    b.Property<Guid?>("SpecieID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("WellBeingReportID")
@@ -65,7 +95,7 @@ namespace ZooAPI.Migrations
 
                     b.HasIndex("HealthJournalID");
 
-                    b.HasIndex("SpeciesID");
+                    b.HasIndex("SpecieID");
 
                     b.HasIndex("WellBeingReportID");
 
@@ -81,20 +111,10 @@ namespace ZooAPI.Migrations
                     b.Property<string>("EnclosureName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SpeciesID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("Statues")
+                        .HasColumnType("int");
 
                     b.HasKey("EnclosureID");
-
-                    b.HasIndex("SpeciesID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("enclosures");
                 });
@@ -110,9 +130,9 @@ namespace ZooAPI.Migrations
                     b.ToTable("HealthJournals");
                 });
 
-            modelBuilder.Entity("ZooAPI.models.Species", b =>
+            modelBuilder.Entity("ZooAPI.models.Specie", b =>
                 {
-                    b.Property<Guid>("SpeciesID")
+                    b.Property<Guid>("SpecieID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -122,9 +142,28 @@ namespace ZooAPI.Migrations
                     b.Property<string>("SpeciesName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SpeciesID");
+                    b.HasKey("SpecieID");
 
                     b.ToTable("Species");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Toys", b =>
+                {
+                    b.Property<Guid>("ToyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EnclosureID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ToyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ToyId");
+
+                    b.HasIndex("EnclosureID");
+
+                    b.ToTable("Toys");
                 });
 
             modelBuilder.Entity("ZooAPI.models.User", b =>
@@ -187,15 +226,45 @@ namespace ZooAPI.Migrations
                     b.ToTable("WellBeingReports");
                 });
 
+            modelBuilder.Entity("EnclosureSpecies", b =>
+                {
+                    b.HasOne("ZooAPI.models.Enclosure", null)
+                        .WithMany()
+                        .HasForeignKey("EnclosureID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZooAPI.models.Specie", null)
+                        .WithMany()
+                        .HasForeignKey("SpecieID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EnclosureStaff", b =>
+                {
+                    b.HasOne("ZooAPI.models.Enclosure", null)
+                        .WithMany()
+                        .HasForeignKey("EnclosureID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZooAPI.models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ZooAPI.models.Animal", b =>
                 {
                     b.HasOne("ZooAPI.models.HealthJournal", "HealthJournal")
                         .WithMany()
                         .HasForeignKey("HealthJournalID");
 
-                    b.HasOne("ZooAPI.models.Species", "Species")
+                    b.HasOne("ZooAPI.models.Specie", "Specie")
                         .WithMany("Animals")
-                        .HasForeignKey("SpeciesID");
+                        .HasForeignKey("SpecieID");
 
                     b.HasOne("ZooAPI.models.WellBeingReport", "wellBeingReport")
                         .WithMany()
@@ -203,40 +272,30 @@ namespace ZooAPI.Migrations
 
                     b.Navigation("HealthJournal");
 
-                    b.Navigation("Species");
+                    b.Navigation("Specie");
 
                     b.Navigation("wellBeingReport");
                 });
 
+            modelBuilder.Entity("ZooAPI.models.Toys", b =>
+                {
+                    b.HasOne("ZooAPI.models.Enclosure", "Enclosure")
+                        .WithMany("Toys")
+                        .HasForeignKey("EnclosureID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enclosure");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Enclosure", b =>
                 {
-                    b.HasOne("ZooAPI.models.Species", "Species")
-                        .WithMany("enclosures")
-                        .HasForeignKey("SpeciesID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ZooAPI.models.User", "User")
-                        .WithMany("Enclosures")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Species");
-
-                    b.Navigation("User");
+                    b.Navigation("Toys");
                 });
 
-            modelBuilder.Entity("ZooAPI.models.Species", b =>
+            modelBuilder.Entity("ZooAPI.models.Specie", b =>
                 {
                     b.Navigation("Animals");
-
-                    b.Navigation("enclosures");
-                });
-
-            modelBuilder.Entity("ZooAPI.models.User", b =>
-                {
-                    b.Navigation("Enclosures");
                 });
 #pragma warning restore 612, 618
         }

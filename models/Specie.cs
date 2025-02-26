@@ -5,13 +5,13 @@ using ZooAPI.Interfaces;
 
 namespace ZooAPI.models
 {
-    public class Species : ISpecies
+    public class Specie : ISpecies
     {
-        public Guid SpeciesID { get; set; }
+        public Guid SpecieID { get; set; }
         public string SpeciesName { get; set; }
         public bool Gotindividuals { get; set; }
         public ICollection<Animal> Animals { get; set; }
-        public ICollection<Enclosure> enclosures {get; set;}
+        public ICollection<Enclosure> Enclosures {get; set;}
 
 
     }
