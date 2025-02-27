@@ -30,14 +30,7 @@ namespace ZooAPI.Data
                     EU => EU.HasKey("EnclosureID", "UserID"));
 
 
-            modelBuilder.Entity<Enclosure>()
-                .HasMany(E => E.Species)
-                .WithMany(S => S.Enclosures)
-                .UsingEntity(
-                "EnclosureSpecies",
-                S => S.HasOne(typeof(Specie)).WithMany().HasForeignKey("SpecieID").HasPrincipalKey(nameof(Specie.SpecieID)),
-                E => E.HasOne(typeof(Enclosure)).WithMany().HasForeignKey("EnclosureID").HasPrincipalKey(nameof(Enclosure.EnclosureID)),
-                ES => ES.HasKey("EnclosureID", "SpecieID"));
+            
 
             modelBuilder.Entity<User>(b =>
             {

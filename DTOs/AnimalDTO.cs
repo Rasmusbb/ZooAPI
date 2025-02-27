@@ -9,6 +9,7 @@ namespace ZooAPI.DTOs
     {
         public string physicalID { get; set; }
         public string Name { get; set; }
+        public string Gender { get; set; }
         public statues statues { get; set; }
         public DateTime birthday { get; set; }
         public string specie { get; set; }

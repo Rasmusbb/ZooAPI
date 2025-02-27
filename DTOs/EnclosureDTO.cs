@@ -6,6 +6,7 @@ namespace ZooAPI.DTOs
     public class EnclosureDTO
     {
         public string EnclosureName { get; set; }
+        public double Size { get; set; }
 
     }
 

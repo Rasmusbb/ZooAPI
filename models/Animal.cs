@@ -11,6 +11,12 @@ namespace ZooAPI.models
         Sick,
         Dead
     }
+    public enum Gender
+    {
+        Male,
+        Female,
+        Both
+    }
 
     public class Animal : IAnimal
     {
@@ -18,14 +24,18 @@ namespace ZooAPI.models
         public Guid AnimalID { get; set; }
         public string physicalID { get; set; }
         public string Name { get; set; }
+        public Gender Gender { get; set; }
         public statues statues { get; set; }
         public DateTime birthday { get; set; }
         public DateTime DeathDay { get; set; }
         public string characteristics { get; set; }
-
         public string specialNeeds { get; set; }
         public string Comments { get; set; }
 
+
+        [ForeignKey("EnclosureID")]
+        public Guid? EnclosureID { get; set;}
+        public Enclosure Enclosure {get; set;}
 
         [ForeignKey("HealthJournalID")]
         public Guid? HealthJournalID { get; set; }

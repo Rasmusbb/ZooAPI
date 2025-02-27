@@ -12,8 +12,8 @@ using ZooAPI.Data;
 namespace ZooAPI.Migrations
 {
     [DbContext(typeof(ZooAPIContext))]
-    [Migration("20250225133733_enclosure")]
-    partial class enclosure
+    [Migration("20250227123513_animalsin")]
+    partial class animalsin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace ZooAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EnclosureSpecies", b =>
-                {
-                    b.Property<Guid>("EnclosureID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SpecieID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("EnclosureID", "SpecieID");
-
-                    b.HasIndex("SpecieID");
-
-                    b.ToTable("EnclosureSpecies");
-                });
 
             modelBuilder.Entity("EnclosureStaff", b =>
                 {
@@ -66,6 +51,12 @@ namespace ZooAPI.Migrations
 
                     b.Property<DateTime>("DeathDay")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EnclosureID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("HealthJournalID")
                         .HasColumnType("uniqueidentifier");
@@ -96,6 +87,8 @@ namespace ZooAPI.Migrations
 
                     b.HasKey("AnimalID");
 
+                    b.HasIndex("EnclosureID");
+
                     b.HasIndex("HealthJournalID");
 
                     b.HasIndex("SpecieID");
@@ -113,6 +106,9 @@ namespace ZooAPI.Migrations
 
                     b.Property<string>("EnclosureName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("float");
 
                     b.Property<int>("Statues")
                         .HasColumnType("int");
@@ -141,6 +137,9 @@ namespace ZooAPI.Migrations
 
                     b.Property<bool>("Gotindividuals")
                         .HasColumnType("bit");
+
+                    b.Property<double>("SpaceNeed")
+                        .HasColumnType("float");
 
                     b.Property<string>("SpeciesName")
                         .HasColumnType("nvarchar(max)");
@@ -229,21 +228,6 @@ namespace ZooAPI.Migrations
                     b.ToTable("WellBeingReports");
                 });
 
-            modelBuilder.Entity("EnclosureSpecies", b =>
-                {
-                    b.HasOne("ZooAPI.models.Enclosure", null)
-                        .WithMany()
-                        .HasForeignKey("EnclosureID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ZooAPI.models.Specie", null)
-                        .WithMany()
-                        .HasForeignKey("SpecieID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EnclosureStaff", b =>
                 {
                     b.HasOne("ZooAPI.models.Enclosure", null)
@@ -261,6 +245,10 @@ namespace ZooAPI.Migrations
 
             modelBuilder.Entity("ZooAPI.models.Animal", b =>
                 {
+                    b.HasOne("ZooAPI.models.Enclosure", "Enclosure")
+                        .WithMany("Animals")
+                        .HasForeignKey("EnclosureID");
+
                     b.HasOne("ZooAPI.models.HealthJournal", "HealthJournal")
                         .WithMany()
                         .HasForeignKey("HealthJournalID");
@@ -272,6 +260,8 @@ namespace ZooAPI.Migrations
                     b.HasOne("ZooAPI.models.WellBeingReport", "wellBeingReport")
                         .WithMany()
                         .HasForeignKey("WellBeingReportID");
+
+                    b.Navigation("Enclosure");
 
                     b.Navigation("HealthJournal");
 
@@ -293,6 +283,8 @@ namespace ZooAPI.Migrations
 
             modelBuilder.Entity("ZooAPI.models.Enclosure", b =>
                 {
+                    b.Navigation("Animals");
+
                     b.Navigation("Toys");
                 });
 

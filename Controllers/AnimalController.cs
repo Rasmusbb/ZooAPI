@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
 using ZooAPI.Data;
 using ZooAPI.DTOs;
 using ZooAPI.models;
@@ -15,7 +16,7 @@ namespace ZooAPI.Controllers
         private readonly ZooAPIContext _context;
         private readonly IConfiguration _configuration;
 
-        private readonly string DsetNull = "Entity set 'DatabaseContext.Animal' is null.";
+        private readonly string DsetNull = "Entity set 'DatabaseContext.Animal' or 'DatabaseContext.Species' is null.";
         public AnimalController(ZooAPIContext context, IConfiguration iConfig)
         {
             _context = context;
@@ -53,9 +54,21 @@ namespace ZooAPI.Controllers
             return Animal.Adapt<AnimalDTOID>();
         }
 
+        [HttpGet("GetAllSpecie")]
+        public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies()
+        {
+            if (_context.Species == null)
+            {
+                return Problem(DsetNull);
+            }
+            List<Specie> speices = _context.Species.ToList();
+
+            return speices.Adapt<List<SpeciesDTOID>>();
+            
+        }
 
         [HttpGet("GetAllAnimals")]
-        public async Task<ActionResult<List<AnimalDTOID>>> GetAllUsers(string specie)
+        public async Task<ActionResult<List<AnimalDTOID>>> GetAllAnimals()
         {
             if (_context.Animals == null)
             {
