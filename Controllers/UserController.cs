@@ -39,6 +39,7 @@ namespace ZooAPI.Controllers
             {
                 return Problem(DsetNull);
             }
+            Email = Email.ToLower();
             User user = _context.Users.FirstOrDefault(u => u.Email == Email);
             if(user != null)
             {
@@ -57,13 +58,15 @@ namespace ZooAPI.Controllers
         }
 
         [HttpPost("AddUser")]
-        public async Task<ActionResult<UserDTO>> AddUser(CreateUserDTO UserDTO)
+        public async Task<ActionResult<UserDTO>> AddUser(CreateUserDTO userDTO)
         {
             if (_context.Users == null)
             {
                 return Problem(DsetNull);
             }
-            User user = UserDTO.Adapt<User>();
+           
+            userDTO.Email = userDTO.Email.ToLower();
+            User user = userDTO.Adapt<User>();
             _context.Users.Add(user);
             user.Password = Hash(user.Password + user.UserID);
             await _context.SaveChangesAsync();
@@ -131,6 +134,28 @@ namespace ZooAPI.Controllers
         }
 
 
+        [Authorize]
+        [HttpPut("ChangeUserPassword")]
+
+        public async Task<ActionResult> ChangePassword(UserDTOPasID UserDTO)
+        {
+
+            if (_context.Users == null)
+            {
+                return Problem(DsetNull);
+            }
+            User user = await _context.Users.FindAsync(UserDTO.UserID);
+            user.Password = Hash(user.Password + user.UserID);
+            user.changedDefault = true;
+            _context.SaveChanges();
+
+            if (user == null)
+            {
+                return NotFound(user.UserID);
+            }
+
+            return Ok("User Password Changed");
+        }
         public static string Hash(string password)
         {
 

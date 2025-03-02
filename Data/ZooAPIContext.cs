@@ -35,7 +35,7 @@ namespace ZooAPI.Data
             modelBuilder.Entity<User>(b =>
             {
                 b.HasData(
-                    new User {UserID = Guid.Parse("57622b09-2e10-49ff-c0d7-08dd4f427cf0"), Name = "BB",Email = "BB@AalborgZoo.dk",Phone = "55286715",Role = UserRole.Admin, mainArea = "Dinosaurs", Password= "7791b785456b7814357e881d7642b057533e0f6a148e959e5a8134df3535acbb" });
+                    new User {UserID = Guid.Parse("334EE910-110A-4601-B939-08DD57C95921"), Name = "admin",Email = "admin",Phone = "None",Role = UserRole.Admin, mainArea = "None", Password= "9ffe44f9b962cc75df9112bf0010481d8a48f830a3c7d15f54b920845b1fde9c" });
             });
         }
         public DbSet<User> Users { get; set; }

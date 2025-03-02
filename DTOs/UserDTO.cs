@@ -1,4 +1,5 @@
-﻿using ZooAPI.models;
+﻿using System.Security.Permissions;
+using ZooAPI.models;
 
 namespace ZooAPI.DTOs
 {
@@ -13,7 +14,7 @@ namespace ZooAPI.DTOs
 
         public string Role { get; set; }
 
-        
+
     }
 
     public class UserDTOID : UserDTO
@@ -25,4 +26,11 @@ namespace ZooAPI.DTOs
     {
         public string Password { get; set; }
     }
+
+    public class UserDTOPasID
+    {
+        public Guid UserID { get; set; }
+        public string Password { get; set; }
+    }
+
 }

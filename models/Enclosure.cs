@@ -17,6 +17,7 @@ namespace ZooAPI.models
         public Guid EnclosureID { get; set; }
         public string EnclosureName { get; set; }
         public double Size { get; set; }
+        public DateTime LastFeeding { get; set; }
         public EnclosureStatues Statues { get; set; }
         public ICollection<Animal> Animals { get; set; }
         public ICollection<User> Users { get; set; }
