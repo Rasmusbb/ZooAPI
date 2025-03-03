@@ -12,8 +12,8 @@ using ZooAPI.Data;
 namespace ZooAPI.Migrations
 {
     [DbContext(typeof(ZooAPIContext))]
-    [Migration("20250227123513_animalsin")]
-    partial class animalsin
+    [Migration("20250303072259_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,9 @@ namespace ZooAPI.Migrations
 
                     b.Property<string>("EnclosureName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastFeeding")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Size")
                         .HasColumnType("float");
@@ -205,15 +208,15 @@ namespace ZooAPI.Migrations
                     b.HasData(
                         new
                         {
-                            UserID = new Guid("57622b09-2e10-49ff-c0d7-08dd4f427cf0"),
+                            UserID = new Guid("334ee910-110a-4601-b939-08dd57c95921"),
                             Deleted = false,
-                            Email = "BB@AalborgZoo.dk",
-                            Name = "BB",
-                            Password = "7791b785456b7814357e881d7642b057533e0f6a148e959e5a8134df3535acbb",
-                            Phone = "55286715",
+                            Email = "admin",
+                            Name = "admin",
+                            Password = "9ffe44f9b962cc75df9112bf0010481d8a48f830a3c7d15f54b920845b1fde9c",
+                            Phone = "None",
                             Role = 0,
                             changedDefault = false,
-                            mainArea = "Dinosaurs"
+                            mainArea = "None"
                         });
                 });
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ZooAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class animalsin : Migration
+    public partial class test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +18,7 @@ namespace ZooAPI.Migrations
                     EnclosureID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EnclosureName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Size = table.Column<double>(type: "float", nullable: false),
+                    LastFeeding = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Statues = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -170,7 +171,7 @@ namespace ZooAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserID", "Deleted", "Email", "Name", "Password", "Phone", "Role", "changedDefault", "mainArea" },
-                values: new object[] { new Guid("57622b09-2e10-49ff-c0d7-08dd4f427cf0"), false, "BB@AalborgZoo.dk", "BB", "7791b785456b7814357e881d7642b057533e0f6a148e959e5a8134df3535acbb", "55286715", 0, false, "Dinosaurs" });
+                values: new object[] { new Guid("334ee910-110a-4601-b939-08dd57c95921"), false, "admin", "admin", "9ffe44f9b962cc75df9112bf0010481d8a48f830a3c7d15f54b920845b1fde9c", "None", 0, false, "None" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Animals_EnclosureID",

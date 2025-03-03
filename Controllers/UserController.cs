@@ -44,7 +44,10 @@ namespace ZooAPI.Controllers
             if(user != null)
             {
                 string Hash2 = Hash(Password + user.UserID);
-                if (Hash(Password + user.UserID) == user.Password)
+                Console.WriteLine("=============================");
+                Console.WriteLine("Hash: " + Hash2);
+                Console.WriteLine("=============================");
+                if (Hash2 == user.Password)
                 {
                 
                     return GenerateJwtToken(user);
@@ -64,13 +67,19 @@ namespace ZooAPI.Controllers
             {
                 return Problem(DsetNull);
             }
-           
-            userDTO.Email = userDTO.Email.ToLower();
-            User user = userDTO.Adapt<User>();
-            _context.Users.Add(user);
-            user.Password = Hash(user.Password + user.UserID);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetUser", new { id = user.UserID },user);
+            try
+            {
+                userDTO.Email = userDTO.Email.ToLower();
+                User user = userDTO.Adapt<User>();
+                _context.Users.Add(user);
+                user.Password = Hash(userDTO.Password + user.UserID);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetUser", new { id = user.UserID }, user);
+            }
+            catch
+            {
+                return BadRequest();
+            }
 
         }
         [Authorize]
@@ -145,7 +154,7 @@ namespace ZooAPI.Controllers
                 return Problem(DsetNull);
             }
             User user = await _context.Users.FindAsync(UserDTO.UserID);
-            user.Password = Hash(user.Password + user.UserID);
+            user.Password = Hash(UserDTO.Password + user.UserID);
             user.changedDefault = true;
             _context.SaveChanges();
 
@@ -177,10 +186,11 @@ namespace ZooAPI.Controllers
             Claim[] claims = new Claim[]
             {
                 new Claim("UserID", user.UserID.ToString()),
+                new Claim("Name", user.Name.ToString() ?? "None"),
                 new Claim("Role", user.Role.ToString()),
-                new Claim("MainArea",user.mainArea),
-                new Claim("Phone",user.Phone),
-                new Claim("Email",user.Email),
+                new Claim("MainArea",user.mainArea ?? "None"),
+                new Claim("Phone",user.Phone ?? "None"),
+                new Claim("Email",user.Email ?? "None"),
                 new Claim("ChangeDefault", user.changedDefault.ToString())
             };
             var token = new JwtSecurityToken(
