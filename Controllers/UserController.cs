@@ -44,9 +44,6 @@ namespace ZooAPI.Controllers
             if(user != null)
             {
                 string Hash2 = Hash(Password + user.UserID);
-                Console.WriteLine("=============================");
-                Console.WriteLine("Hash: " + Hash2);
-                Console.WriteLine("=============================");
                 if (Hash2 == user.Password)
                 {
                 
@@ -54,7 +51,7 @@ namespace ZooAPI.Controllers
                 }
                 else
                 {
-                    return NotFound();
+                    return NotFound(Hash2);
                 }
             }
             return NotFound();
@@ -114,11 +111,30 @@ namespace ZooAPI.Controllers
 
         [Authorize]
         [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<List<UserDTOID>>> GetAllUsers(UserRole role)
+        public async Task<ActionResult<List<UserDTOID>>> GetAllUsers()
         {
             List<User> users = _context.Users.ToList();
             return users.Adapt<List<UserDTOID>>();
         }
+
+        [Authorize]
+        [HttpGet("GetUserEnclosures")]
+        public async Task<ActionResult<List<EnclosureDTOID>>> GetUserEnclosures(Guid UserID,bool oppsitse = false)
+        {
+            List<Enclosure> Enclosures;
+            if (!oppsitse)
+            {
+                Enclosures = _context.Users.Where(u => u.UserID == UserID).SelectMany(u => u.Enclosures).ToList();
+            }
+            else
+            {
+                Enclosures = _context.Users.Where(u => u.UserID == UserID).SelectMany(u => u.Enclosures).ToList();
+            }
+
+            return Enclosures.Adapt<List<EnclosureDTOID>>();
+        }
+
+
         [Authorize]
         [HttpPut("EditedUser")]
 
@@ -185,13 +201,13 @@ namespace ZooAPI.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             Claim[] claims = new Claim[]
             {
-                new Claim("UserID", user.UserID.ToString()),
-                new Claim("Name", user.Name.ToString() ?? "None"),
-                new Claim("Role", user.Role.ToString()),
-                new Claim("MainArea",user.mainArea ?? "None"),
-                new Claim("Phone",user.Phone ?? "None"),
-                new Claim("Email",user.Email ?? "None"),
-                new Claim("ChangeDefault", user.changedDefault.ToString())
+                new Claim("userID", user.UserID.ToString()),
+                new Claim("name", user.Name.ToString() ?? "None"),
+                new Claim("role", user.Role.ToString()),
+                new Claim("mainArea",user.mainArea ?? "None"),
+                new Claim("phone",user.Phone ?? "None"),
+                new Claim("email",user.Email ?? "None"),
+                new Claim("changeDefault", user.changedDefault.ToString())
             };
             var token = new JwtSecurityToken(
                 issuer: "ZooAPI",

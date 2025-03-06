@@ -12,7 +12,7 @@ using ZooAPI.Data;
 namespace ZooAPI.Migrations
 {
     [DbContext(typeof(ZooAPIContext))]
-    [Migration("20250303072259_test")]
+    [Migration("20250306101340_test")]
     partial class test
     {
         /// <inheritdoc />
