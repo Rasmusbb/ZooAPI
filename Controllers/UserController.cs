@@ -43,15 +43,15 @@ namespace ZooAPI.Controllers
             User user = _context.Users.FirstOrDefault(u => u.Email == Email);
             if(user != null)
             {
-                string Hash2 = Hash(Password + user.UserID);
-                if (Hash2 == user.Password)
+                string hash = Hash(Password + user.UserID);
+                if (hash == user.Password)
                 {
                 
                     return GenerateJwtToken(user);
                 }
                 else
                 {
-                    return NotFound(Hash2);
+                    return NotFound(hash);
                 }
             }
             return NotFound();
