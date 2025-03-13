@@ -54,40 +54,38 @@ namespace ZooAPI.Controllers
             return Animal.Adapt<AnimalDTOID>();
         }
 
-        [HttpGet("GetAllSpecie")]
-        public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies()
-        {
-            if (_context.Species == null)
-            {
-                return Problem(DsetNull);
-            }
-            List<Specie> speices = _context.Species.ToList();
+        //[HttpGet("GetAllSpecie")]
+        //public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies()
+        //{
+        //    if (_context.Species == null)
+        //    {
+        //        return Problem(DsetNull);
+        //    }
+        //    List<Specie> speices = _context.Species.ToList();
 
-            return speices.Adapt<List<SpeciesDTOID>>();
+        //    return speices.Adapt<List<SpeciesDTOID>>();
             
-        }
+        //}
 
         [HttpGet("GetAllAnimals")]
         public async Task<ActionResult<List<AnimalDTOID>>> GetAllAnimals()
         {
             if (_context.Animals == null)
-            {
-                return Problem(DsetNull);
-            }
+            { 
             List<Animal> animals = _context.Animals.ToList();
             return animals.Adapt<List<AnimalDTOID>>();
         }
 
-        [HttpGet("GetAllSpecies")]
-        public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies(string specie)
-        {
-            if (_context.Species == null)
-            {
-                return Problem(DsetNull);
-            }
-            List<Specie> species = _context.Species.ToList();
-            return specie.Adapt<List<SpeciesDTOID>>();
-        }
+        //[HttpGet("GetAllSpecies")]
+        //public async Task<ActionResult<List<SpeciesDTOID>>> GetAllSpecies(string specie)
+        //{
+        //    if (_context.Species == null)
+        //    {
+        //        return Problem(DsetNull);
+        //    }
+        //    List<Specie> species = _context.Species.ToList();
+        //    return specie.Adapt<List<SpeciesDTOID>>();
+        //}
 
         [HttpPut("EditAnimal")]
         public async Task<ActionResult<AnimalDTO>> EditAnimal(Guid AnimalID, AnimalDTO animalDTO)

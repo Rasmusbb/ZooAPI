@@ -22,7 +22,7 @@ namespace ZooAPI.Controllers
             _context = context;
             _configuration = iConfig;
         }
-
+        [Authorize]
         [HttpPost("AddEnclosure")]
         public async Task<ActionResult<EnclosureDTO>> EnclosureUser(EnclosureDTO EnclosureDTO)
         {
@@ -37,8 +37,8 @@ namespace ZooAPI.Controllers
             return CreatedAtAction("GetEnclosure", new { id = enclosure.EnclosureID }, enclosure);
 
         }
-
-        [HttpGet("Enclosure")]
+        [Authorize]
+        [HttpGet("GetEnclosure")]
         public async Task<ActionResult<EnclosureDTO>> GetEnclosure(Guid EnclosureID)
         {
             if (_context.enclosures == null)
@@ -54,7 +54,7 @@ namespace ZooAPI.Controllers
         }
 
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("GetAllEnclosure")]
         public async Task<ActionResult<List<EnclosureDTOID>>> GetAllEnclosure()
         {
@@ -63,6 +63,7 @@ namespace ZooAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpPost("AddStaff")]
         public async Task<ActionResult> AddStaffToEncloure(Guid EncloureID,Guid UserID)
         {
@@ -73,6 +74,10 @@ namespace ZooAPI.Controllers
             }
             User user = await _context.Users.FindAsync(UserID);
             Enclosure enclosure = await _context.enclosures.FindAsync(EncloureID);
+            if(enclosure.Users == null)
+            {
+                enclosure.Users = new List<User>();
+            }
             if (enclosure.Users.Contains(user))
             {
                 return BadRequest("User already added to enclosure");
@@ -82,7 +87,7 @@ namespace ZooAPI.Controllers
             return Ok();
         }
 
-
+        [Authorize]
         [HttpPost("AddAnimal")]
         public async Task<ActionResult> AddAnimal(Guid EncloureID, Guid AnimalID)
         {

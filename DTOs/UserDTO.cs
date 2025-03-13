@@ -13,8 +13,10 @@ namespace ZooAPI.DTOs
         public string mainArea { get; set; }
 
         public string Role { get; set; }
-
-
+    }
+    public class CreateUserDTO : UserDTO
+    {
+        public string Password { get; set; }
     }
 
     public class UserDTOID : UserDTO
@@ -22,10 +24,6 @@ namespace ZooAPI.DTOs
         public Guid UserID { get; set; }
     }
 
-    public class CreateUserDTO : UserDTO
-    {
-        public string Password { get; set; }
-    }
 
     public class UserDTOPasID
     {

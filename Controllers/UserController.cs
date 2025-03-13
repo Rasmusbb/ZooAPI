@@ -128,7 +128,7 @@ namespace ZooAPI.Controllers
             }
             else
             {
-                Enclosures = _context.Users.Where(u => u.UserID == UserID).SelectMany(u => u.Enclosures).ToList();
+                Enclosures = _context.Users.Where(u => u.UserID != UserID).SelectMany(u => u.Enclosures).ToList();
             }
 
             return Enclosures.Adapt<List<EnclosureDTOID>>();

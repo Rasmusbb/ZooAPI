@@ -25,8 +25,11 @@ namespace ZooAPI.Data
                 .WithMany(U => U.Enclosures)
                 .UsingEntity(
                     "EnclosureStaff",
-                    U => U.HasOne(typeof(User)).WithMany().HasForeignKey("UserID").HasPrincipalKey(nameof(User.UserID)),
-                    E => E.HasOne(typeof(Enclosure)).WithMany().HasForeignKey("EnclosureID").HasPrincipalKey(nameof(Enclosure.EnclosureID)),
+                    U => U.HasOne(typeof(User)).WithMany()
+                    .HasForeignKey("UserID").HasPrincipalKey(nameof(User.UserID)),
+                    E => E.HasOne(typeof(Enclosure)).
+                    WithMany().HasForeignKey("EnclosureID").
+                    HasPrincipalKey(nameof(Enclosure.EnclosureID)),
                     EU => EU.HasKey("EnclosureID", "UserID"));
 
 
@@ -41,12 +44,7 @@ namespace ZooAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Enclosure> enclosures { get; set; }
-        public DbSet<Specie> Species { get; set; }
 
-        public DbSet<Toys> Toys { get; set; }
-        public DbSet<HealthJournal> HealthJournals {  get; set; }
-
-        public DbSet<WellBeingReport> WellBeingReports { get; set; }
 
     
     }

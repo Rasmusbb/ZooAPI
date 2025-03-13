@@ -8,6 +8,8 @@ namespace ZooAPI.DTOs
         public string EnclosureName { get; set; }
         public double Size { get; set; }
 
+        public double State { get; set;
+        }
     }
 
 
