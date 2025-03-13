@@ -20,7 +20,7 @@ namespace ZooAPI.Interfaces
         public DateTime DeathDay { get; set; }
         public string characteristics { get; set; }
         public string specialNeeds { get; set; }
-        public string Comments { get; set; }
+        public ICollection<AnimalComments> Comments { get; set; }
         public Guid? WellBeingReportID { get; set; }
         public WellBeingReport wellBeingReport { get; set; }
 

@@ -32,8 +32,17 @@ namespace ZooAPI.Data
                     HasPrincipalKey(nameof(Enclosure.EnclosureID)),
                     EU => EU.HasKey("EnclosureID", "UserID"));
 
+            modelBuilder.Entity<HealthJournal>()
+                .HasOne(h => h.User)
+                .WithMany()
+                .HasForeignKey(h => h.UserID)
+                .OnDelete(DeleteBehavior.Restrict);  
 
-            
+            modelBuilder.Entity<Prescription>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<User>(b =>
             {
@@ -44,6 +53,11 @@ namespace ZooAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Enclosure> enclosures { get; set; }
+        public DbSet<Specie> Species { get; set; }
+        public DbSet<Incidents> Incidents { get; set; }
+        public DbSet<AnimalComments> animalComments {get; set;}
+        public DbSet<Toys> Toys { get; set; }
+        public DbSet<HealthJournal> HealthJournals {  get; set; }
 
 
     
