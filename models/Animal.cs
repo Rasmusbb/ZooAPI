@@ -30,7 +30,7 @@ namespace ZooAPI.models
         public DateTime DeathDay { get; set; }
         public string characteristics { get; set; }
         public string specialNeeds { get; set; }
-        public string Comments { get; set; }
+        public ICollection<AnimalComments> Comments { get; set; }
 
 
         [ForeignKey("EnclosureID")]

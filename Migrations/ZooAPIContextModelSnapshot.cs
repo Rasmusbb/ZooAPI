@@ -43,9 +43,6 @@ namespace ZooAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DeathDay")
                         .HasColumnType("datetime2");
 
@@ -95,6 +92,25 @@ namespace ZooAPI.Migrations
                     b.ToTable("Animals");
                 });
 
+            modelBuilder.Entity("ZooAPI.models.AnimalComments", b =>
+                {
+                    b.Property<Guid>("CommentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AnimalID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CommentID");
+
+                    b.HasIndex("AnimalID");
+
+                    b.ToTable("animalComments");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Enclosure", b =>
                 {
                     b.Property<Guid>("EnclosureID")
@@ -124,9 +140,125 @@ namespace ZooAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("height")
+                        .HasColumnType("float");
+
+                    b.Property<double>("lenght")
+                        .HasColumnType("float");
+
+                    b.Property<double>("weight")
+                        .HasColumnType("float");
+
                     b.HasKey("HealthJournalID");
 
+                    b.HasIndex("UserID");
+
                     b.ToTable("HealthJournals");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Incidents", b =>
+                {
+                    b.Property<Guid>("IncidentsID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Incident")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("WellBeingReportID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("created")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("IncidentsID");
+
+                    b.HasIndex("UserID");
+
+                    b.HasIndex("WellBeingReportID");
+
+                    b.ToTable("Incidents");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Injurie", b =>
+                {
+                    b.Property<Guid>("InjurieID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("HealthJournalID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("injuie")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InjurieID");
+
+                    b.HasIndex("HealthJournalID");
+
+                    b.ToTable("Injurie");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Prescription", b =>
+                {
+                    b.Property<Guid>("PrescriptionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("HealthJournalID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InjuieID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InjurieID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Medicine")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("dose")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("expired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("unit")
+                        .HasColumnType("int");
+
+                    b.HasKey("PrescriptionID");
+
+                    b.HasIndex("HealthJournalID");
+
+                    b.HasIndex("InjurieID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Prescription");
                 });
 
             modelBuilder.Entity("ZooAPI.models.Specie", b =>
@@ -223,7 +355,18 @@ namespace ZooAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("created")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("WellBeingReportID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("WellBeingReports");
                 });
@@ -270,6 +413,79 @@ namespace ZooAPI.Migrations
                     b.Navigation("wellBeingReport");
                 });
 
+            modelBuilder.Entity("ZooAPI.models.AnimalComments", b =>
+                {
+                    b.HasOne("ZooAPI.models.Animal", "Animal")
+                        .WithMany("Comments")
+                        .HasForeignKey("AnimalID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.HealthJournal", b =>
+                {
+                    b.HasOne("ZooAPI.models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Incidents", b =>
+                {
+                    b.HasOne("ZooAPI.models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZooAPI.models.WellBeingReport", null)
+                        .WithMany("Incidents")
+                        .HasForeignKey("WellBeingReportID");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Injurie", b =>
+                {
+                    b.HasOne("ZooAPI.models.HealthJournal", "healthJournal")
+                        .WithMany("injuries")
+                        .HasForeignKey("HealthJournalID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("healthJournal");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Prescription", b =>
+                {
+                    b.HasOne("ZooAPI.models.HealthJournal", "HealthJournal")
+                        .WithMany("prescriptions")
+                        .HasForeignKey("HealthJournalID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZooAPI.models.Injurie", "injurie")
+                        .WithMany()
+                        .HasForeignKey("InjurieID");
+
+                    b.HasOne("ZooAPI.models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HealthJournal");
+
+                    b.Navigation("User");
+
+                    b.Navigation("injurie");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Toys", b =>
                 {
                     b.HasOne("ZooAPI.models.Enclosure", "Enclosure")
@@ -281,6 +497,22 @@ namespace ZooAPI.Migrations
                     b.Navigation("Enclosure");
                 });
 
+            modelBuilder.Entity("ZooAPI.models.WellBeingReport", b =>
+                {
+                    b.HasOne("ZooAPI.models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.Animal", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Enclosure", b =>
                 {
                     b.Navigation("Animals");
@@ -288,9 +520,21 @@ namespace ZooAPI.Migrations
                     b.Navigation("Toys");
                 });
 
+            modelBuilder.Entity("ZooAPI.models.HealthJournal", b =>
+                {
+                    b.Navigation("injuries");
+
+                    b.Navigation("prescriptions");
+                });
+
             modelBuilder.Entity("ZooAPI.models.Specie", b =>
                 {
                     b.Navigation("Animals");
+                });
+
+            modelBuilder.Entity("ZooAPI.models.WellBeingReport", b =>
+                {
+                    b.Navigation("Incidents");
                 });
 #pragma warning restore 612, 618
         }
